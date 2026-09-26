@@ -465,6 +465,18 @@ def check_instance(obj: Any, type_: Any) -> bool:
                 # Return the result
                 return all_items_meet_condition
 
+            # Fixed-length tuples, e.g. tuple[int, str]: check each element against its own type
+            elif (
+                isinstance(obj, tuple)
+                and origin is tuple
+                and not (len(element_type) == 2 and element_type[1] is Ellipsis)
+            ):
+                if element_type == ((),):  # tuple[()] on older pythons
+                    element_type = ()
+                return len(obj) == len(element_type) and all(
+                    check_instance(i, t) for i, t in zip(obj, element_type, strict=True)
+                )
+
             # If the object is a list, set, or tuple
             elif isinstance(obj, (list, set, tuple)):
                 element_type = element_type[0]

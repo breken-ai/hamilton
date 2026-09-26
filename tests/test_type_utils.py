@@ -360,6 +360,20 @@ def test_check_instance_with_generic_list_type():
     assert check_instance([1, 2, "3"], list)
 
 
+def test_check_instance_with_fixed_length_tuple_type():
+    assert check_instance((1, "a"), tuple[int, str])
+    assert check_instance((1, [2]), tuple[int, list[int]])
+    assert check_instance((), tuple[()])
+    assert not check_instance(("a", 1), tuple[int, str])
+    assert not check_instance((1,), tuple[int, str])
+    assert not check_instance((1, "a", 2), tuple[int, str])
+    assert not check_instance((1, ["x"]), tuple[int, list[int]])
+    assert not check_instance((1,), tuple[()])
+    # variable-length tuples still check every element against the one type
+    assert check_instance((1, 2, 3), tuple[int, ...])
+    assert not check_instance((1, "a"), tuple[int, ...])
+
+
 def test_check_instance_with_list_type():
     assert check_instance([1, 2, 3], list)
     assert check_instance([1, 2, "3"], list)

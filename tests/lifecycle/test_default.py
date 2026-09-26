@@ -56,6 +56,36 @@ def test_function_input_output_type_checker_handles_pep604_union_of_generics():
     assert dr.execute(["total"], inputs={"n": 0}) == {"total": 0}
 
 
+def test_function_input_output_type_checker_handles_fixed_length_tuples():
+    def pair(n: int) -> tuple[int, str]:
+        return n, str(n)
+
+    def label(pair: tuple[int, str]) -> str:
+        return f"{pair[0]}:{pair[1]}"
+
+    dr = (
+        driver.Builder()
+        .with_modules(ad_hoc_utils.create_temporary_module(pair, label))
+        .with_adapters(default.FunctionInputOutputTypeChecker())
+        .build()
+    )
+    assert dr.execute(["label"], inputs={"n": 3}) == {"label": "3:3"}
+
+
+def test_function_input_output_type_checker_rejects_wrong_fixed_length_tuple():
+    def pair(n: int) -> tuple[int, str]:
+        return str(n), n
+
+    dr = (
+        driver.Builder()
+        .with_modules(ad_hoc_utils.create_temporary_module(pair))
+        .with_adapters(default.FunctionInputOutputTypeChecker())
+        .build()
+    )
+    with pytest.raises(TypeError, match="Node pair returned a result"):
+        dr.execute(["pair"], inputs={"n": 3})
+
+
 def test_function_input_output_type_checker_rejects_wrong_pep604_union_result():
     def evens(n: int) -> list[int] | None:
         return ["not", "ints"]
