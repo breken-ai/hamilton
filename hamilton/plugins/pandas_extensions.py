@@ -194,6 +194,8 @@ class PandasCSVReader(DataLoader):
             kwargs["skipinitialspace"] = self.skipinitialspace
         if self.skiprows is not None:
             kwargs["skiprows"] = self.skiprows
+        if self.skipfooter is not None:
+            kwargs["skipfooter"] = self.skipfooter
         if self.nrows is not None:
             kwargs["nrows"] = self.nrows
         if self.na_values is not None:
@@ -224,6 +226,8 @@ class PandasCSVReader(DataLoader):
             kwargs["compression"] = self.compression
         if self.thousands is not None:
             kwargs["thousands"] = self.thousands
+        if self.decimal is not None:
+            kwargs["decimal"] = self.decimal
         if self.lineterminator is not None:
             kwargs["lineterminator"] = self.lineterminator
         if self.quotechar is not None:

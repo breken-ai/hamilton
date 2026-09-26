@@ -236,6 +236,16 @@ def test_pandas_csv_reader(tmp_path: pathlib.Path) -> None:
     ]
 
 
+def test_pandas_csv_reader_decimal_and_skipfooter(tmp_path: pathlib.Path) -> None:
+    path_to_test = tmp_path / "prices.csv"
+    path_to_test.write_text("item;price\nbread;1,5\nmilk;0,99\ntotal rows;2\n")
+    reader = PandasCSVReader(path=path_to_test, sep=";", decimal=",", skipfooter=1, engine="python")
+    df, _ = reader.load_data(pd.DataFrame)
+
+    assert df["item"].tolist() == ["bread", "milk"]
+    assert df["price"].tolist() == [1.5, 0.99]
+
+
 def test_pandas_csv_writer(tmp_path: pathlib.Path) -> None:
     file_path = tmp_path / "test.csv"
     writer = PandasCSVWriter(path=file_path)
