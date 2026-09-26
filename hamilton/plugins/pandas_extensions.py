@@ -845,7 +845,7 @@ class PandasXmlReader(DataLoader):
         if self.xpath is not None:
             kwargs["xpath"] = self.xpath
         if self.namespace is not None:
-            kwargs["namespace"] = self.namespace
+            kwargs["namespaces"] = self.namespace
         if self.elems_only is not None:
             kwargs["elems_only"] = self.elems_only
         if self.attrs_only is not None:
@@ -932,7 +932,7 @@ class PandasXmlWriter(DataSaver):
         if self.attr_cols is not None:
             kwargs["attr_cols"] = self.attr_cols
         if self.elems_cols is not None:
-            kwargs["elems_cols"] = self.elems_cols
+            kwargs["elem_cols"] = self.elems_cols
         if self.namespaces is not None:
             kwargs["namespaces"] = self.namespaces
         if self.prefix is not None:

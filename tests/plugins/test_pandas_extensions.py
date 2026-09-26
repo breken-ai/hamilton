@@ -157,6 +157,30 @@ def test_pandas_xml_writer(tmp_path: pathlib.Path) -> None:
     assert "__version__" in metadata["dataframe_metadata"]
 
 
+def test_pandas_xml_reader_namespace(tmp_path: pathlib.Path) -> None:
+    path_to_test = tmp_path / "namespaced.xml"
+    path_to_test.write_text(
+        '<?xml version="1.0"?>'
+        '<d:data xmlns:d="urn:example"><d:row><d:a>1</d:a></d:row><d:row><d:a>2</d:a></d:row></d:data>'
+    )
+    reader = PandasXmlReader(
+        path_or_buffer=path_to_test, xpath="//d:row", namespace={"d": "urn:example"}
+    )
+    df, _ = reader.load_data(pd.DataFrame)
+
+    assert df["a"].tolist() == [1, 2]
+
+
+def test_pandas_xml_writer_elems_cols(tmp_path: pathlib.Path) -> None:
+    file_path = tmp_path / "test.xml"
+    writer = PandasXmlWriter(path_or_buffer=file_path, elems_cols=["foo"])
+    writer.save_data(pd.DataFrame({"foo": ["bar"], "baz": ["qux"]}))
+
+    written = file_path.read_text()
+    assert "<foo>bar</foo>" in written
+    assert "baz" not in written
+
+
 def test_pandas_html_reader(tmp_path: pathlib.Path) -> None:
     path_to_test = "tests/resources/data/test_load_from_data.html"
     reader = PandasHtmlReader(io=path_to_test)
