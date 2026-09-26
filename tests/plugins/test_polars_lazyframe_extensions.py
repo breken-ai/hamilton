@@ -68,6 +68,15 @@ def test_lazy_polars_lazyframe_csv(df: pl.LazyFrame, tmp_path: pathlib.Path) -> 
     assert_frame_equal(df.collect(), df2.collect())
 
 
+def test_lazy_polars_csv_comment_char(tmp_path: pathlib.Path) -> None:
+    file = tmp_path / "commented.csv"
+    file.write_text("# exported 2026-01-01\na,b\n1,3\n# note\n2,4\n")
+
+    df, _ = PolarsScanCSVReader(file=file, comment_char="#").load_data(pl.LazyFrame)
+
+    assert_frame_equal(df.collect(), pl.DataFrame({"a": [1, 2], "b": [3, 4]}))
+
+
 def test_lazy_polars_parquet(df: pl.LazyFrame, tmp_path: pathlib.Path) -> None:
     file = tmp_path / "test.parquet"
 

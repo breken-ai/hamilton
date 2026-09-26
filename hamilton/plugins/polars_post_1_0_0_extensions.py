@@ -119,7 +119,7 @@ class PolarsCSVReader(DataLoader):
         if self.separator is not None:
             kwargs["separator"] = self.separator
         if self.comment_char is not None:
-            kwargs["comment_char"] = self.comment_char
+            kwargs["comment_prefix"] = self.comment_char
         if self.quote_char is not None:
             kwargs["quote_char"] = self.quote_char
         if self.skip_rows is not None:
