@@ -55,6 +55,8 @@ class MatplotlibWriter(DataSaver):
 
     def _get_saving_kwargs(self) -> dict:
         kwargs = {}
+        if self.dpi is not None:
+            kwargs["dpi"] = self.dpi
         if self.format is not None:
             kwargs["format"] = self.format
         if self.metadata is not None:

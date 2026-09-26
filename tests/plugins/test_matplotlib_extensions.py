@@ -48,3 +48,15 @@ def test_plotly_static_writer(figure: matplotlib.figure.Figure, tmp_path: pathli
 
     assert file_path.exists()
     assert metadata[FILE_METADATA]["path"] == str(file_path)
+
+
+def test_matplotlib_writer_dpi(tmp_path: pathlib.Path) -> None:
+    from PIL import Image
+
+    file_path = tmp_path / "figure.png"
+    figure = plt.figure(figsize=(2, 1), dpi=100)
+
+    MatplotlibWriter(path=file_path, dpi=300).save_data(figure)
+
+    with Image.open(file_path) as image:
+        assert image.size == (600, 300)
